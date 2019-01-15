@@ -25,8 +25,7 @@ X = X(:, 2:30);
 [Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_training, N);
 
 % variable selection
-% ONEvsALL
-% SVM algorithm
+% ONEvsALL + SVM algorithm(learner)
 % cross-validation
 % training
 % test
