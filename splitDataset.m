@@ -27,14 +27,14 @@ function [Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_tr, N)
     yts_index = 1;
     
     for i = 1:step:rows
-        for j = 0:step
+        for j = 0:step-1
             if (i + j > rows)
                 break
             endif
-            if (j < 75)
+            if (j < train_rows_per_class)
                 Xtr(xtr_index, :) = X(i + j, 1:(cols - 1));
                 Ytr(ytr_index, :) = X(i + j, cols);
-                xtr_index += 1
+                xtr_index += 1;
                 ytr_index += 1;
             else           
                 Xts(xts_index, :) = X(i + j, 1:(cols - 1));
