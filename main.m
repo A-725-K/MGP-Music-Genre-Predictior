@@ -3,8 +3,9 @@ close all; clear; clc;
 %% --- VARIABLES --- %%
 dataset_name = 'inputs/data.csv';
 perc_training = 0.75;
+N = 10; % number of classes
 
-%reading the dateset from file
+% reading the dateset from file
 X = csvread(dataset_name);
 
 [rows, cols] = size(X);
@@ -21,7 +22,7 @@ X = X(2:rows, :);
 X = X(:, 2:30);
 
 % split the dataset into two parts
-[Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_training)
+[Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_training, N);
 
 % variable selection
 % ONEvsALL
