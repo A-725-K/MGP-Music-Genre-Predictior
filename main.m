@@ -18,13 +18,14 @@ X = X(2:rows, :);
 % titletracks)
 % I ignore the last column because it is the label of the genre in a 
 % string format; moreover I added a column with a numeric value for that
-% field
+% fieldw
 X = X(:, 2:30);
+
+% feature selection
 
 % split the dataset into two parts
 [Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_training, N);
 
-% variable selection
 % ONEvsALL + SVM algorithm(learner)
 % cross-validation
 % training

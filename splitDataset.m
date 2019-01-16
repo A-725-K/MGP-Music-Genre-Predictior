@@ -27,6 +27,8 @@ function [Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_tr, N)
     yts_index = 1;
     
     for i = 1:step:rows
+        I = randperm(step);
+        X(i:i+step-1, :) = X(i + I(:) - 1, :); %row shuffle
         for j = 0:step-1
             if (i + j > rows)
                 break
