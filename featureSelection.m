@@ -2,6 +2,7 @@
 function I = featureSelection(X, N)
     [rows, cols] = size(X);
     step = rows/N;
+    threshold = 0.01;
     
     S = zeros(N, cols-1);
     for j = 1:cols-1
@@ -16,7 +17,7 @@ function I = featureSelection(X, N)
     endfor
     S_means = mean(S(:, :));
     
-    I = selectColumns(S_means, 0.01);
+    I = selectColumns(S_means, threshold);
 endfunction
 
 %% to apply the Fisher's criterion to evaluate the goodness
