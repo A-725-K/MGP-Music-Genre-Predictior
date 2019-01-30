@@ -1,8 +1,10 @@
-%% This function split the dataset X into training and test sets
+%% This function split the dataset X into training 
+%% and test sets.
 %%
 %% inputs:
 %%  - X: dataset to split
-%%  - perc_tr: how much training set extract from the dataset (in percentage)
+%%  - perc_tr: how much training set extract from the 
+%%             dataset (in percentage)
 %%  - N: number of classes
 %%
 %% outputs:

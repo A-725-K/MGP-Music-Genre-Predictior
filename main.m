@@ -1,16 +1,20 @@
 close all; clear; clc; 
 pkg load optim;
 
-%% --- VARIABLES --- %%
-%dataset_name = 'inputs/data.csv';
-dataset_name = 'inputs/data_2genre.csv';
-%N = 10; % number of classes
-N = 2; % number of classes
+% --- DATASETS --- %
+dataset_name = 'inputs/data.csv';
+N = 10; % number of classes
+%%dataset_name = 'inputs/data_2genre.csv';
+%%N = 2; % number of classes
+
+% --- VARIABLES --- %
 perc_training = 0.75;
+C = 1; %lambda for soft-margin
 
 % reading the dateset from file
 X = csvread(dataset_name);
 
+% getting the size of the dataset
 [rows, ~] = size(X);
 
 % I ignore the first row because there are the labels of the columns
@@ -21,10 +25,10 @@ X = X(2:rows, :);
 % titletracks)
 % I ignore the last column because it is the label of the genre in a 
 % string format; moreover I added a column with a numeric value for that
-% fieldw
+% field
 X = X(:, 2:30);
 
-% feature selection
+% feature selection and reduction of the dataset
 I = featureSelection(X, N);
 
 %I = [2 1 4 5 6 7];
@@ -33,23 +37,26 @@ X = X(:, I);
 % split the dataset into two parts
 [Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_training, N);
 
-%Xtr = Xtr(1:150, :);
-%Ytr = Ytr(1:150);
+% get the model
+%[classifiers, n] = OneVSOne(Xtr, Ytr, N, C);
+load('classifiers');
 
-v = SVM(Xtr, Ytr, Xts(1, :));
+%for i = size(Xts)(1)
+   x = 1;
+   pred = zeros(45, 1);
+   for i = 1:10
+       for j = i+1:10
+            res = testSVM(classifiers(x).w, classifiers(x).b, Xts(35,:));
+            if (res == 1)
+                pred(x++) = i;
+            else
+                pred(x++) = j;
+            endif
+        endfor
+    endfor
+val = votingProtocol(pred)
+%endfor
 
-% -------------------- %
-% ------- TEST ------- %
-% -------------------- %
-%%[rowsYts, ~] = size(Yts);
-%%index = 0;
-%%Ypred = zeros(rowsYts, 1);
-%%for i = 1:50
-%%    Ypred(i, 1) = SVM(Xtr, Ytr, Xts(i, :));
-%%endfor
-%%calculateError(Yts, Ypred)
-
-% OneVSAll
 % cross-validation
 
 
