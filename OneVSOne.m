@@ -14,7 +14,7 @@
 %%  - classifiers: list of trained classifiers
 %%  - nr_classifiers: the number of classifiers obtained
     
-function [classifiers, nr_classifiers] = OneVSOne(Xtr, Ytr, N,C)  
+function [classifiers, nr_classifiers] = OneVSOne(Xtr, Ytr, N, C)  
     [rows, ~] = size(Xtr);
     nr_classifiers = N*(N-1)/2;
     el_per_class = floor(rows / N);
