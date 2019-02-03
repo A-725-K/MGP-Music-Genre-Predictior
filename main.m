@@ -1,6 +1,8 @@
 close all; clear; clc; 
 pkg load optim;
 
+overall_time_start = time();
+
 % --- DATASET 10 GENRES --- %
 dataset_name = 'inputs/data.csv';
 N = 10; % number of classes
@@ -13,8 +15,8 @@ N = 10; % number of classes
 
 % --- VARIABLES --- %
 perc_training = 0.75;
-%C = [1:0.5:15]; % lambda for soft-margin
-C = [1:0.2:4]; % lambda for soft-margin
+n_rep = 10;
+C = [0.2:0.2:10]; % lambda for soft-margin
 
 % reading the dateset from file
 X = csvread(dataset_name);
@@ -35,7 +37,6 @@ X = X(:, 2:30);
 
 % feature selection and reduction of the dataset
 I = featureSelection(X, N);
-
 %I = [2 1 4 5 6 7 29];
 X = X(:, I);
 
@@ -44,36 +45,39 @@ X = X(:, I);
 [rowsXts, ~] = size(Xts);
 [rowsYts, ~] = size(Yts);
 
+% hold-out cross validation
+lambda = holdoutCrossValidation(Xtr, Ytr, N, C, n_rep);
 
-errs = zeros(29, 1);
-errs_i = 1;
-% get the model
-for c = C
-    [classifiers, n] = OneVSOne(Xtr, Ytr, N, c);
+% parameter tuning
+[classifiers, n] = OneVSOne(Xtr, Ytr, N, lambda);
 
-    Ypred = zeros(rowsYts, 1);
-    yp_idx = 1;
-    for k = 1:rowsXts
-       x = 1;
-       pred = zeros(n, 1);
-       for i = 1:N
-           for j = i+1:N
-                res = testSVM(classifiers(x).w, classifiers(x).b, Xts(k,:));
-                if (res == 1)
-                    pred(x++) = i;
-                else
-                    pred(x++) = j;
-                endif
-            endfor
-        endfor
-        Ypred(yp_idx++) = votingProtocol(pred);
+% test
+Ypred = zeros(rowsXts, 1);
+yp_idx = 1;
+for k = 1:rowsXts
+    x = 1;
+    pred = zeros(n, 1);
+    for i = 1:N
+      for j = i+1:N
+          res = testSVM(classifiers(x).w, classifiers(x).b, Xts(k,:));
+          if (res == 1)
+              pred(x++) = i;
+          else
+              pred(x++) = j;
+          endif
+      endfor
     endfor
-
-    %Ypred
-    errs(errs_i) = calculateError(Yts, Ypred);
-    fprintf('Accuracy -> %f %%\n', 1 - errs(errs_i++));
+    Ypred(yp_idx++) = votingProtocol(pred);
 endfor
+overall_time_end = time();
 
-figure 831486;
-plot(C, errs);
-% cross-validation
+err = calculateError(Yts, Ypred);
+fprintf('Accuracy of test --> %d %%\n', (1 - err)*100);
+
+minutes = round((overall_time_end - overall_time_start)/60);
+seconds = mod(round(overall_time_end - overall_time_start), 60);
+hours = floor(minutes/60);
+minutes -= 60*hours;
+
+fprintf('The test lasts for %d hours %d minutes and %d seconds\n', 
+         hours, minutes, seconds);

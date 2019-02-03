@@ -13,10 +13,12 @@
 
 function [Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_tr, N)
     [rows, cols] = size(X);
-    train_rows = floor(rows*perc_tr);
+    train_rows = ceil(rows*perc_tr);
     test_rows = rows - train_rows;
     train_rows_per_class = train_rows/N;
     step = rows/N;
+    
+    %train_rows, test_rows
     
     Xtr = zeros(train_rows, cols - 1);
     Ytr = zeros(train_rows, 1);
@@ -32,7 +34,7 @@ function [Xtr, Ytr, Xts, Yts] = splitDataset(X, perc_tr, N)
         I = randperm(step);
         X(i:i+step-1, :) = X(i + I(:) - 1, :); %row shuffle
         for j = 0:step-1
-            if (i + j > rows)
+            if (i + j > rows)%-step)
                 break
             endif
             if (j < train_rows_per_class)

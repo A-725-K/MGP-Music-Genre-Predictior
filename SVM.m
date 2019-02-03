@@ -16,8 +16,8 @@ function [w, b] = SVM(X, Y, C)
     
     [rows, ~] = size(X);
     el_per_class = floor(rows / 2);
-    n_iter = 500;  % iterations allowed in qp
-    threshold = 0.01; % tau for finding support vectors
+    n_iter = 600;  % iterations allowed in qp
+    threshold = 0.0001; % tau for finding support vectors
     
     % split in half the training set labels
     % the only permitted labels are {+1, -1}
@@ -25,7 +25,7 @@ function [w, b] = SVM(X, Y, C)
     Y(el_per_class+1:end) = -1;
     
     % parameters for quadratic programming solver (qp)
-    X0 = ones(rows, 1);
+    X0 = zeros(rows, 1);
     H = (X*X') .* (Y*Y');
     F = -ones(rows, 1);
     A = [];
@@ -39,14 +39,21 @@ function [w, b] = SVM(X, Y, C)
     [Alpha, ~, info, ~] = qp(X0, H, F, A, B, LB, UB, options);
     
     SV = findSupportVectors(Alpha, 0, C, threshold);
+     if (~ isvector(SV) || size(SV, 1) == 0)
+        fprintf('Did not found any support vector\n');
+        w = 0;
+        b = 0;
+        return;
+    endif
     w = computeW(X, Y, Alpha, SV);
     b = calculateB(X, Y, Alpha, SV);
 endfunction
 
 % compute the vector w (slope)
 function w = computeW(X, Y, Alpha, SV)
-    if (~ isvector(Alpha) || ~ isvector(Y) || ~ isvector(SV))
-        error('Alpha,Y and SV must be vectors');
+     if (~ isvector(Alpha) || ~ isvector(Y))
+        Alpha
+        error('Alpha and Y must be1 vectors');
     endif
     [~, colsX] = size(X);
     w = zeros(1, colsX);
@@ -73,8 +80,8 @@ endfunction
 
 % compute the value of b (intercept)
 function b = calculateB(X, Y, Alpha, SV)
-    if (~ isvector(Alpha) || ~ isvector(Y) || ~ isvector(SV))
-        error('Alpha,Y and SV must be vectors');
+    if (~ isvector(Alpha) || ~ isvector(Y))
+        error('Alpha and Y must be vectors');
     endif
     [Ns, ~] = size(SV);
     b = 0;

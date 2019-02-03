@@ -35,11 +35,18 @@ function [classifiers, nr_classifiers] = OneVSOne(Xtr, Ytr, N, C)
             lst_1 = fst_class*el_per_class;
             fst_2 = (snd_class-1)*el_per_class+1;
             lst_2 = snd_class*el_per_class;
+            %printf('\n');
             [w, b] = SVM(Xtr([fst_1:lst_1 fst_2:lst_2], :), ...
                          Ytr([fst_1:lst_1 fst_2:lst_2]), C);
+            if (w == 0 && b == 0)
+                classifiers = [];
+                nr_classifiers = 0;
+                return;
+            endif
             classifiers(idx_class).w = w;
             classifiers(idx_class).b = b;
             idx_class++;
         endfor
+        %printf('----------------------\n');
     endfor
 endfunction
