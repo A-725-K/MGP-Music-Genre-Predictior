@@ -1,3 +1,17 @@
+%% This function tries different values of lambda in order to find the best one
+%% which implements the soft margin SVM on average within a certain number of 
+%% iterations.
+%%
+%% inputs:
+%%  - Xtr: training set
+%%  - Ytr: labels of training set
+%%  - N: number of classes
+%%  - C: values of lambda to try
+%%  - n_iter: number of iterations for each value of lambda
+%%
+%% output:
+%%  - lambda: the best lambda choosen by the algorithm
+
 function lambda = holdoutCrossValidation(Xtr, Ytr, N, C, n_iter)
     [~, colsC] = size(C);
     idx_accs = 1;
@@ -39,7 +53,9 @@ function lambda = holdoutCrossValidation(Xtr, Ytr, N, C, n_iter)
                 pred = zeros(n, 1);
                 for i = 1:N
                     for j = i+1:N
-                        res = testSVM(classifiers(x).w, classifiers(x).b, Xtr_ts(k,:));
+                        res = testSVM(classifiers(x).w, ...
+                                      classifiers(x).b, ...
+                                      Xtr_ts(k,:));
                         if (res == 1)
                             pred(x++) = i;
                         else

@@ -1,4 +1,10 @@
-%% select a subset of features of the dataset
+%% This function select a subset of features of the dataset which are retained
+%% important to predict the result.
+%%
+%% inputs:
+%%  - X: dataset
+%%  - N: number of classes
+
 function I = featureSelection(X, N)
     [rows, cols] = size(X);
     step = rows/N;
@@ -20,7 +26,7 @@ function I = featureSelection(X, N)
     I = selectColumns(S_means, threshold);
 endfunction
 
-%% to apply the Fisher's criterion to evaluate the goodness
+%% Fisher's criterion to evaluate the goodness of a feature
 function n = fisherCriterion(mean_c, mean_others, var_c, var_others)
     num = (mean_c - mean_others);
     den = sqrt(var_c + var_others);

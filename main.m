@@ -37,7 +37,7 @@ X = X(:, 2:30);
 
 % feature selection and reduction of the dataset
 I = featureSelection(X, N);
-%I = [2 1 4 5 6 7 29];
+%I = [2 1 4 5 6 7 29];  % features suggested by the maintainer of the dataset
 X = X(:, I);
 
 % split the dataset into two parts
